@@ -1,4 +1,4 @@
-From dac609fc379ccd535ddb5ebcd3b7fd2d004dc4e3 Mon Sep 17 00:00:00 2001
+From c8db0bedbd80881e357cd43d0af3a800139bf549 Mon Sep 17 00:00:00 2001
 From: Justin <jrd2558@gmail.com>
 Date: Tue, 30 Apr 2019 10:34:56 -0700
 Subject: [PATCH] Improve inferred generic types
@@ -194,7 +194,7 @@ index bf30fd0..1da5acf 100644
    public void getBytecodeRange(BitSet values) {
      measureBytecode(values, lstOperands);
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
-index 5c66d04..469fdac 100644
+index 5c66d04..a73b2f7 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 @@ -53,6 +53,7 @@ public class InvocationExprent extends Exprent {
@@ -535,7 +535,7 @@ index 5c66d04..469fdac 100644
      List<VarVersionPair> mask = null;
      boolean isEnum = false;
      if (functype == TYP_INIT) {
-@@ -401,28 +622,6 @@ public class InvocationExprent extends Exprent {
+@@ -401,28 +623,6 @@ public class InvocationExprent extends Exprent {
      StructClass currCls = ((ClassNode)DecompilerContext.getProperty(DecompilerContext.CURRENT_CLASS_NODE)).classStruct;
      List<StructMethod> matches = getMatchedDescriptors();
      BitSet setAmbiguousParameters = getAmbiguousParameters(matches);
@@ -564,7 +564,7 @@ index 5c66d04..469fdac 100644
  
      // omit 'new Type[] {}' for the last parameter of a vararg method call
      if (lstParameters.size() == descriptor.params.length && isVarArgCall()) {
-@@ -486,20 +685,33 @@ public class InvocationExprent extends Exprent {
+@@ -486,20 +686,33 @@ public class InvocationExprent extends Exprent {
  
      }
  
@@ -611,7 +611,7 @@ index 5c66d04..469fdac 100644
      }
  
  
-@@ -537,6 +750,11 @@ public class InvocationExprent extends Exprent {
+@@ -538,6 +751,11 @@ public class InvocationExprent extends Exprent {
          */
  
          Exprent param = unboxIfNeeded(lstParameters.get(i));
@@ -623,7 +623,7 @@ index 5c66d04..469fdac 100644
          // 'byte' and 'short' literals need an explicit narrowing type cast when used as a parameter
          ExprProcessor.getCastedExprent(param, types[i], buff, indent, true, ambiguous, true, tracer);
  
-@@ -552,8 +770,6 @@ public class InvocationExprent extends Exprent {
+@@ -553,8 +771,6 @@ public class InvocationExprent extends Exprent {
        }
      }
  
@@ -632,7 +632,7 @@ index 5c66d04..469fdac 100644
      return buf;
    }
  
-@@ -814,6 +1030,158 @@ public class InvocationExprent extends Exprent {
+@@ -848,6 +1064,158 @@ public class InvocationExprent extends Exprent {
      return ambiguous;
    }
  
@@ -791,7 +791,7 @@ index 5c66d04..469fdac 100644
    @Override
    public void replaceExprent(Exprent oldExpr, Exprent newExpr) {
      if (oldExpr == instance) {
-@@ -926,6 +1294,18 @@ public class InvocationExprent extends Exprent {
+@@ -960,6 +1328,18 @@ public class InvocationExprent extends Exprent {
      return isSyntheticGetClass;
    }
  
@@ -811,7 +811,7 @@ index 5c66d04..469fdac 100644
    public void getBytecodeRange(BitSet values) {
      measureBytecode(values, lstParameters);
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/NewExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/NewExprent.java
-index 2c8a5dc..0bb72ef 100644
+index 2c8a5dc..a11c74c 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/NewExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/NewExprent.java
 @@ -7,7 +7,16 @@ import org.jetbrains.java.decompiler.code.CodeConstants;
@@ -854,7 +854,7 @@ index 2c8a5dc..0bb72ef 100644
  
    public NewExprent(VarType newType, ListStack<Exprent> stack, int arrayDim, BitSet bytecodeOffsets) {
      this(newType, getDimensions(arrayDim, stack), bytecodeOffsets);
-@@ -80,14 +95,141 @@ public class NewExprent extends Exprent {
+@@ -80,14 +95,142 @@ public class NewExprent extends Exprent {
    @Override
    public VarType getInferredExprType(VarType upperBound) {
      genericArgs.clear();
@@ -869,7 +869,8 @@ index 2c8a5dc..0bb72ef 100644
 -        if (sig.genericType != _new) {
 -          return _new;
 +        if (constructor != null) {
-+          return constructor.getInferredExprType(upperBound);
++          VarType ret = constructor.getInferredExprType(upperBound);
++          return ret.type != CodeConstants.TYPE_VOID ? ret : getExprType();
 +        }
 +        else {
 +          Map<VarType, VarType> genericsMap = new HashMap<>();
@@ -1001,7 +1002,7 @@ index 2c8a5dc..0bb72ef 100644
          }
        }
      }
-@@ -208,30 +350,13 @@ public class NewExprent extends Exprent {
+@@ -208,30 +351,13 @@ public class NewExprent extends Exprent {
          }
        }
  
@@ -1038,7 +1039,7 @@ index 2c8a5dc..0bb72ef 100644
        }
  
        buf.append(')');
-@@ -244,6 +369,7 @@ public class NewExprent extends Exprent {
+@@ -244,6 +370,7 @@ public class NewExprent extends Exprent {
          if (!DecompilerContext.getOption(IFernflowerPreferences.LAMBDA_TO_ANONYMOUS_CLASS)) {
            buf.setLength(0);  // remove the usual 'new <class>()', it will be replaced with lambda style '() ->'
          }
@@ -1046,7 +1047,7 @@ index 2c8a5dc..0bb72ef 100644
          Exprent methodObject = constructor == null ? null : constructor.getInstance();
          TextBuffer clsBuf = new TextBuffer();
          new ClassWriter().classLambdaToJava(child, clsBuf, methodObject, indent, tracer);
-@@ -295,35 +421,10 @@ public class NewExprent extends Exprent {
+@@ -295,35 +422,10 @@ public class NewExprent extends Exprent {
        }
  
        if (constructor != null) {
@@ -1085,7 +1086,7 @@ index 2c8a5dc..0bb72ef 100644
          }
        }
      }
-@@ -383,7 +484,8 @@ public class NewExprent extends Exprent {
+@@ -383,7 +485,8 @@ public class NewExprent extends Exprent {
      return buf;
    }
  
@@ -1095,7 +1096,7 @@ index 2c8a5dc..0bb72ef 100644
      ClassNode node = DecompilerContext.getClassProcessor().getMapRootClasses().get(className);
      return node != null && node.type == ClassNode.CLASS_ANONYMOUS;
    }
-@@ -421,6 +523,152 @@ public class NewExprent extends Exprent {
+@@ -421,6 +524,152 @@ public class NewExprent extends Exprent {
      return null;
    }
  
@@ -1248,7 +1249,7 @@ index 2c8a5dc..0bb72ef 100644
    @Override
    public void replaceExprent(Exprent oldExpr, Exprent newExpr) {
      if (oldExpr == constructor) {
-@@ -525,4 +773,10 @@ public class NewExprent extends Exprent {
+@@ -525,4 +774,10 @@ public class NewExprent extends Exprent {
      }
      return "";
    }
@@ -1365,7 +1366,7 @@ index 48d49e6..e419603 100644
      return this;
    }
 diff --git a/src/org/jetbrains/java/decompiler/struct/gen/generics/GenericType.java b/src/org/jetbrains/java/decompiler/struct/gen/generics/GenericType.java
-index 9dc9d81..57a170c 100644
+index 9dc9d81..fe731ac 100644
 --- a/src/org/jetbrains/java/decompiler/struct/gen/generics/GenericType.java
 +++ b/src/org/jetbrains/java/decompiler/struct/gen/generics/GenericType.java
 @@ -4,12 +4,16 @@ package org.jetbrains.java.decompiler.struct.gen.generics;
@@ -1403,7 +1404,24 @@ index 9dc9d81..57a170c 100644
    }
  
    public int getWildcard() {
-@@ -359,4 +365,128 @@ public class GenericType extends VarType {
+@@ -333,6 +339,16 @@ public class GenericType extends VarType {
+   public VarType remap(Map<VarType, VarType> map) {
+     VarType main = super.remap(map);
+     if (main != this) {
++      int wild = main != null && main.isGeneric() ? ((GenericType)main).getWildcard() : WILDCARD_NO;
++      if (main != null && getWildcard() != WILDCARD_NO && wild != getWildcard()) {
++        if (main.isGeneric()) {
++          GenericType genMain = (GenericType)main;
++          main = new GenericType(main.type, main.arrayDim, main.value, genMain.parent, genMain.arguments, getWildcard());
++        }
++        else {
++          main = new GenericType(main.type, main.arrayDim, main.value, null, new ArrayList<>(), getWildcard());
++        }
++      }
+       return main;
+     }
+     boolean changed = false;
+@@ -359,4 +375,128 @@ public class GenericType extends VarType {
      }
      return this;
    }
@@ -1475,7 +1493,7 @@ index 9dc9d81..57a170c 100644
 +        VarType thisArg = arguments.get(i);
 +        VarType otherArg = other.arguments.get(i);
 +
-+        if (thisArg != null) {
++        if (thisArg != null && thisArg != otherArg) {
 +          if (thisArg.type == CodeConstants.TYPE_GENVAR) {
 +            if (otherArg == null && thisArg.arrayDim == 0) {
 +              if (!map.containsKey(thisArg)) {
