@@ -6,7 +6,7 @@ Subject: [PATCH] Enhance Generic Invocations Temporarily.
 This is a temp separate patch until I get some time to merge it to patch 10/13.
 
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java
-index 9025746..bf30fd0 100644
+index 9025746..cc11066 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java
 @@ -7,6 +7,8 @@ import org.jetbrains.java.decompiler.code.CodeConstants;
@@ -18,17 +18,23 @@ index 9025746..bf30fd0 100644
  import org.jetbrains.java.decompiler.modules.decompiler.ExprProcessor;
  import org.jetbrains.java.decompiler.modules.decompiler.vars.CheckTypesResult;
  import org.jetbrains.java.decompiler.struct.gen.VarType;
-@@ -325,6 +327,9 @@ public class FunctionExprent extends Exprent {
+@@ -325,6 +327,15 @@ public class FunctionExprent extends Exprent {
              this.needsCast = false;
            }
          }
 +        else {
 +            this.needsCast = right.type == CodeConstants.TYPE_NULL || !DecompilerContext.getStructContext().instanceOf(right.value, upperBound.value);
 +        }
++        if (!this.needsCast) {
++          if (arrayDim > 0) {
++            right = right.resizeArrayDim(arrayDim);
++          }
++          return right;
++        }
        }
        else { //TODO: Capture generics to make cast better?
          this.needsCast = right.type == CodeConstants.TYPE_NULL || !DecompilerContext.getStructContext().instanceOf(right.value, cast.value);
-@@ -569,7 +574,7 @@ public class FunctionExprent extends Exprent {
+@@ -569,7 +580,7 @@ public class FunctionExprent extends Exprent {
          TYPES[funcType - FUNCTION_I2L]) + ")");
      }
  
@@ -37,7 +43,7 @@ index 9025746..bf30fd0 100644
      throw new RuntimeException("invalid function");
    }
  
-@@ -650,7 +655,7 @@ public class FunctionExprent extends Exprent {
+@@ -650,7 +661,7 @@ public class FunctionExprent extends Exprent {
      measureBytecode(values, lstOperands);
      measureBytecode(values);
    }
@@ -46,7 +52,7 @@ index 9025746..bf30fd0 100644
    // *****************************************************************************
    // IMatchable implementation
    // *****************************************************************************
-@@ -664,4 +669,4 @@ public class FunctionExprent extends Exprent {
+@@ -664,4 +675,4 @@ public class FunctionExprent extends Exprent {
      Integer type = (Integer)matchNode.getRuleValue(MatchProperties.EXPRENT_FUNCTYPE);
      return type == null || this.funcType == type;
    }

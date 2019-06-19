@@ -1,4 +1,4 @@
-From 5520898fd13e2ddc2c890f4643e9a09a7a93902d Mon Sep 17 00:00:00 2001
+From 1a7a0373b0b0454fa75ecd7b71819236da88708b Mon Sep 17 00:00:00 2001
 From: Justin <jrd2558@gmail.com>
 Date: Tue, 30 Apr 2019 10:34:56 -0700
 Subject: [PATCH] Improve inferred generic types
@@ -161,10 +161,10 @@ index 05d9d69..34d6e3a 100644
    // IMatchable implementation
    // *****************************************************************************
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java
-index bf30fd0..1da5acf 100644
+index cc11066..bcc600d 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/FunctionExprent.java
-@@ -335,6 +335,11 @@ public class FunctionExprent extends Exprent {
+@@ -341,6 +341,11 @@ public class FunctionExprent extends Exprent {
          this.needsCast = right.type == CodeConstants.TYPE_NULL || !DecompilerContext.getStructContext().instanceOf(right.value, cast.value);
        }
      }
@@ -176,7 +176,7 @@ index bf30fd0..1da5acf 100644
      return getExprType();
    }
  
-@@ -650,6 +655,16 @@ public class FunctionExprent extends Exprent {
+@@ -656,6 +661,16 @@ public class FunctionExprent extends Exprent {
      this.implicitType = implicitType;
    }
  
