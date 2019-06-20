@@ -1,9 +1,29 @@
-From 1a7a0373b0b0454fa75ecd7b71819236da88708b Mon Sep 17 00:00:00 2001
+From e4c93036043c7a83bb40d96ce077d3b5b2b62c41 Mon Sep 17 00:00:00 2001
 From: Justin <jrd2558@gmail.com>
 Date: Tue, 30 Apr 2019 10:34:56 -0700
 Subject: [PATCH] Improve inferred generic types
 
 
+diff --git a/src/org/jetbrains/java/decompiler/main/extern/IFernflowerPreferences.java b/src/org/jetbrains/java/decompiler/main/extern/IFernflowerPreferences.java
+index 4038554..4adfae7 100644
+--- a/src/org/jetbrains/java/decompiler/main/extern/IFernflowerPreferences.java
++++ b/src/org/jetbrains/java/decompiler/main/extern/IFernflowerPreferences.java
+@@ -32,6 +32,7 @@ public interface IFernflowerPreferences {
+   String BYTECODE_SOURCE_MAPPING = "bsm";
+ 
+   String INCLUDE_ENTIRE_CLASSPATH = "iec";
++  String EXPLICIT_GENERIC_ARGUMENTS = "ega";
+ 
+   String LOG_LEVEL = "log";
+   String MAX_PROCESSING_METHOD = "mpm";
+@@ -80,6 +81,7 @@ public interface IFernflowerPreferences {
+     defaults.put(BYTECODE_SOURCE_MAPPING, "0");
+ 
+     defaults.put(INCLUDE_ENTIRE_CLASSPATH, "0");
++    defaults.put(EXPLICIT_GENERIC_ARGUMENTS, "0");
+ 
+     defaults.put(LOG_LEVEL, IFernflowerLogger.Severity.INFO.name());
+     defaults.put(MAX_PROCESSING_METHOD, "0");
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/ArrayExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/ArrayExprent.java
 index d6b1b50..a10438a 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/ArrayExprent.java
@@ -194,7 +214,7 @@ index cc11066..bcc600d 100644
    public void getBytecodeRange(BitSet values) {
      measureBytecode(values, lstOperands);
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
-index 5c66d04..c374052 100644
+index 5c66d04..101bf44 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 @@ -53,6 +53,7 @@ public class InvocationExprent extends Exprent {
@@ -469,7 +489,7 @@ index 5c66d04..c374052 100644
 +            boolean suppress = (!missing || !isInvocationInstance) &&
 +              (upperBound == null || !newRet.isGeneric() || DecompilerContext.getStructContext().instanceOf(newRet.value, upperBound.value));
 +
-+            if (!suppress) {
++            if (!suppress || DecompilerContext.getOption(IFernflowerPreferences.EXPLICIT_GENERIC_ARGUMENTS)) {
 +              getGenericArgs(fparams, genericsMap, genericArgs);
 +            }
 +            else if (isNew) {
