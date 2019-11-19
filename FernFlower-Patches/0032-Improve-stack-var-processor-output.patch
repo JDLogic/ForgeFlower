@@ -1,4 +1,4 @@
-From c9f742769e56277200efb08aacada1ff8dc5474d Mon Sep 17 00:00:00 2001
+From 1c044d246e7833693a4b44311e4c44b0ad9aa122 Mon Sep 17 00:00:00 2001
 From: Justin <jrd2558@gmail.com>
 Date: Sun, 25 Aug 2019 18:02:16 -0700
 Subject: [PATCH] Improve stack var processor output
@@ -280,7 +280,7 @@ index c235387..24a29d9 100644
  }
 \ No newline at end of file
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
-index fc978b1..8f09409 100644
+index d036f3a..6f692c4 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 @@ -167,6 +167,11 @@ public class InvocationExprent extends Exprent {
@@ -296,10 +296,10 @@ index fc978b1..8f09409 100644
  
    @Override
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java
-index 247263c..20b237b 100644
+index 3222200..47d4635 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java
-@@ -50,6 +50,7 @@ public class VarExprent extends Exprent {
+@@ -51,6 +51,7 @@ public class VarExprent extends Exprent {
    private boolean classDef = false;
    private boolean stack = false;
    private LocalVariable lvt = null;
@@ -307,7 +307,7 @@ index 247263c..20b237b 100644
  
    public VarExprent(int index, VarType varType, VarProcessor processor) {
      this(index, varType, processor, null);
-@@ -102,6 +103,7 @@ public class VarExprent extends Exprent {
+@@ -103,6 +104,7 @@ public class VarExprent extends Exprent {
      var.setClassDef(classDef);
      var.setStack(stack);
      var.setLVT(lvt);
@@ -315,7 +315,7 @@ index 247263c..20b237b 100644
      return var;
    }
  
-@@ -303,6 +305,14 @@ public class VarExprent extends Exprent {
+@@ -315,6 +317,14 @@ public class VarExprent extends Exprent {
      return lvt;
    }
  
@@ -602,5 +602,5 @@ index ef0fc4b..39e42ac 100644
    }
  
 -- 
-2.19.1.windows.1
+2.17.2 (Apple Git-113)
 
