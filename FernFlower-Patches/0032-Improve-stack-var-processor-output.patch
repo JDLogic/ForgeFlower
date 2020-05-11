@@ -1,4 +1,4 @@
-From 1c044d246e7833693a4b44311e4c44b0ad9aa122 Mon Sep 17 00:00:00 2001
+From 57988d808e48925d74958a74a4c6d8912faea1ff Mon Sep 17 00:00:00 2001
 From: Justin <jrd2558@gmail.com>
 Date: Sun, 25 Aug 2019 18:02:16 -0700
 Subject: [PATCH] Improve stack var processor output
@@ -280,7 +280,7 @@ index c235387..24a29d9 100644
  }
 \ No newline at end of file
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
-index d036f3a..6f692c4 100644
+index ccf25eb..cae9073 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/InvocationExprent.java
 @@ -167,6 +167,11 @@ public class InvocationExprent extends Exprent {
@@ -296,7 +296,7 @@ index d036f3a..6f692c4 100644
  
    @Override
 diff --git a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java
-index 3222200..47d4635 100644
+index 10d60fd..2c319f0 100644
 --- a/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java
 +++ b/src/org/jetbrains/java/decompiler/modules/decompiler/exps/VarExprent.java
 @@ -51,6 +51,7 @@ public class VarExprent extends Exprent {
@@ -315,7 +315,7 @@ index 3222200..47d4635 100644
      return var;
    }
  
-@@ -315,6 +317,14 @@ public class VarExprent extends Exprent {
+@@ -319,6 +321,14 @@ public class VarExprent extends Exprent {
      return lvt;
    }
  
